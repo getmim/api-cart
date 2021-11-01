@@ -12,6 +12,7 @@ use Cart\Model\CartItem as CItem;
 use LibFormatter\Library\Formatter;
 use LibForm\Library\Form;
 use Product\Model\Product;
+use Cart\Library\Cart as _Cart;
 
 class CartItemController extends \Api\Controller
 {
@@ -40,20 +41,6 @@ class CartItemController extends \Api\Controller
         }
 
         return $cart;
-    }
-
-    protected function recalculateCart(object $cart): void
-    {
-        $cond = ['cart' => $cart->id];
-        $price = CItem::sum('total', $cond);
-        $set = [
-            'items' => CItem::count($cond),
-            'quantity' => CItem::sum('quantity', $cond),
-            'price' => $price,
-            'total' => $price
-        ];
-
-        Cart::set($set, ['id' => $cart->id]);
     }
 
     public function createAction()
@@ -104,7 +91,7 @@ class CartItemController extends \Api\Controller
 
         $cart_item = CItem::getOne(['id' => $cart_item_id]);
 
-        $this->recalculateCart($cart);
+        _Cart::calculate($cart);
 
         $cart_item = Formatter::format('cart-item', $cart_item, ['cart', 'product']);
 
@@ -144,7 +131,7 @@ class CartItemController extends \Api\Controller
 
         if ($cart_item) {
             CItem::remove(['id' => $id]);
-            $this->recalculateCart($cart);
+            _Cart::calculate($cart);
         }
 
         return $this->resp(0);
