@@ -123,7 +123,7 @@ class CartItemController extends \Api\Controller
 
         $items = CItem::get(['cart' => $cart->id]) ?? [];
         if ($items) {
-            $items = Formatter::formatMany('cart-item', $items);
+            $items = Formatter::formatMany('cart-item', $items, ['product']);
         }
 
         return $this->resp(0, $items);
