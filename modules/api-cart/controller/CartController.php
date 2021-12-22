@@ -9,6 +9,7 @@ namespace ApiCart\Controller;
 
 use Cart\Model\Cart;
 use LibFormatter\Library\Formatter;
+use LibUser\Library\Fetcher;
 
 class CartController extends \Api\Controller
 {
@@ -26,6 +27,14 @@ class CartController extends \Api\Controller
 
         if (!isset($cond['user'])) {
             return $this->resp(401, 'Required `user` field is not set');
+        }
+
+        $user = Fetcher::getOne([
+            'id' => $cond['user'],
+            'status' => ['__op', '>', 0]
+        ]);
+        if (!$user) {
+            return $this->resp(400, 'User not found');
         }
 
         $cart = Cart::getOne($cond);

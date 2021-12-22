@@ -2,7 +2,7 @@
 
 return [
     '__name' => 'api-cart',
-    '__version' => '0.0.1',
+    '__version' => '0.0.2',
     '__git' => 'git@github.com:getmim/api-cart.git',
     '__license' => 'MIT',
     '__author' => [

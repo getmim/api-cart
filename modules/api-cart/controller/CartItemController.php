@@ -2,7 +2,7 @@
 /**
  * CartItemController
  * @package api-cart
- * @version 0.0.1
+ * @version 0.0.2
  */
 
 namespace ApiCart\Controller;
@@ -13,6 +13,7 @@ use LibFormatter\Library\Formatter;
 use LibForm\Library\Form;
 use Product\Model\Product;
 use Cart\Library\Cart as _Cart;
+use LibUser\Library\Fetcher;
 
 class CartItemController extends \Api\Controller
 {
@@ -29,6 +30,15 @@ class CartItemController extends \Api\Controller
 
         if (!isset($cond['user'])) {
             $this->error = 'Required `user` field is not set';
+            return null;
+        }
+
+        $user = Fetcher::getOne([
+            'id' => $cond['user'],
+            'status' => ['__op', '>', 0]
+        ]);
+        if (!$user) {
+            $this->error = 'User not found';
             return null;
         }
 
@@ -50,7 +60,7 @@ class CartItemController extends \Api\Controller
 
         $cart = $this->getCart();
         if (!$cart) {
-            return $this->resp(401, 'Required `user` field is not set');
+            return $this->resp(400, $this->error);
         }
 
         $form = new Form('api-cart.item.create');
@@ -105,7 +115,7 @@ class CartItemController extends \Api\Controller
 
         $cart = $this->getCart();
         if (!$cart) {
-            return $this->resp(401, 'Required `user` field is not set');
+            return $this->resp(400, $this->error);
         }
 
         $items = CItem::get(['cart' => $cart->id]) ?? [];
@@ -123,7 +133,7 @@ class CartItemController extends \Api\Controller
 
         $cart = $this->getCart();
         if (!$cart) {
-            return $this->resp(401, 'Required `user` field is not set');
+            return $this->resp(400, $this->error);
         }
 
         $id = $this->req->param->id;
