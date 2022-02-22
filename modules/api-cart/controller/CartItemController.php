@@ -89,6 +89,9 @@ class CartItemController extends \Api\Controller
                 'price' => $price,
                 'total' => $total
             ]);
+            if (!$cart_item_id) {
+                return $this->resp(500, CItem::lastError());
+            }
         } else {
             $cart_item_id = $cart_item->id;
             $set = [
