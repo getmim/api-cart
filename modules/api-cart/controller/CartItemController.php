@@ -27,26 +27,28 @@ class CartItemController extends \Api\Controller
             $cond['user'] = $this->user->id;
         elseif($user = $this->req->get('user'))
             $cond['user'] = $user;
+        elseif($identifier = $this->req->get('identifier'))
+            $cond['identifier'] = $identifier;
 
-        if (!isset($cond['user'])) {
-            $this->error = 'Required `user` field is not set';
+        if (!isset($cond['user']) && !isset($cond['identifier'])) {
+            $this->error = 'Required `user` or `identifier` field is not set';
             return null;
         }
 
-        $user = Fetcher::getOne([
-            'id' => $cond['user'],
-            'status' => ['__op', '>', 0]
-        ]);
-        if (!$user) {
-            $this->error = 'User not found';
-            return null;
+        if (isset($cond['user'])) {
+            $user = Fetcher::getOne([
+                'id' => $cond['user'],
+                'status' => ['__op', '>', 0]
+            ]);
+            if (!$user) {
+                $this->error = 'User not found';
+                return null;
+            }
         }
 
         $cart = Cart::getOne($cond);
         if (!$cart) {
-            $cart_id = Cart::create([
-                'user' => $cond['user']
-            ]);
+            $cart_id = Cart::create($cond);
             $cart = Cart::getOne(['id' => $cart_id]);
         }
 

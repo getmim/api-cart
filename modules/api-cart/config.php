@@ -2,7 +2,7 @@
 
 return [
     '__name' => 'api-cart',
-    '__version' => '0.0.2',
+    '__version' => '0.1.0',
     '__git' => 'git@github.com:getmim/api-cart.git',
     '__license' => 'MIT',
     '__author' => [
@@ -41,6 +41,13 @@ return [
                 ],
                 'method' => 'GET',
                 'handler' => 'ApiCart\\Controller\\Cart::single'
+            ],
+            'apiCartAssign' => [
+                'path' => [
+                    'value' => '/cart'
+                ],
+                'method' => 'PUT',
+                'handler' => 'ApiCart\\Controller\\Cart::assign'
             ],
             'apiCartItemIndex' => [
                 'path' => [
